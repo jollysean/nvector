@@ -203,9 +203,9 @@ func (nv *NVector) SphericalDistance2(nv2 *NVector, R float64) float64 {
 		dot(&nv.Vec3, &nv2.Vec3))
 
 	if a_ab < 0{
-		fmt.Println("T206: ", a_ab)
+		//fmt.Println("T206: ", a_ab)
 		a_ab = 2*math.Pi + a_ab
-		fmt.Println("T208: ",2*math.Pi , a_ab)
+		//fmt.Println("T208: ",2*math.Pi , a_ab)
 
 	}
 	s_ab := a_ab*R
@@ -331,6 +331,7 @@ func Intersection2(nv1a, nv1b, nv2a, nv2b *NVector) (NVector, error) {
 		//normalB = cross(&nv0.Vec3, &nv2a.Vec3) //&nv2a.Vec3
 		//Method 3 : Equator
 		normalB = &Vec3{0,0,0}
+		//normalB = &Vec3{0,0,1}
 	}else{
 	normalB = cross(&nv2a.Vec3, &nv2b.Vec3)
 	}
@@ -344,6 +345,7 @@ func Intersection2(nv1a, nv1b, nv2a, nv2b *NVector) (NVector, error) {
 
 	intersection = cross(normalA, normalB)
 	intersection2 := Vec3{0,0,0}  //negative(intersection)
+	//intersection2 := Vec3{-1,-1,1}  //negative(intersection)
 	intersection2[0] = -1*intersection[0]
 	intersection2[1] = -1*intersection[1]
 	intersection2[2] = -1*intersection[2]
@@ -363,15 +365,15 @@ func Intersection2(nv1a, nv1b, nv2a, nv2b *NVector) (NVector, error) {
 
 	//loin := in1.ToLonLat().Lon //Let's assume that 1st intersection is nearest to POI (point of interest)
 	//lain := in1.ToLonLat().Lat //Let's assume that 1st intersection is nearest to POI (point of interest)
-	fmt.Println("LOI:::",nv2a.ToLonLat().Lon*180/math.Pi,nv2a.ToLonLat().Lat*180/math.Pi,"|", nv2b.ToLonLat().Lon*180/math.Pi, nv2b.ToLonLat().Lat*180/math.Pi)
-	fmt.Println("Intersects:::",in1.ToLonLat().Lon*180/math.Pi,in1.ToLonLat().Lat*180/math.Pi,"|", in2.ToLonLat().Lon*180/math.Pi, in2.ToLonLat().Lat*180/math.Pi)
+	//fmt.Println("LOI:::",nv2a.ToLonLat().Lon*180/math.Pi,nv2a.ToLonLat().Lat*180/math.Pi,"|", nv2b.ToLonLat().Lon*180/math.Pi, nv2b.ToLonLat().Lat*180/math.Pi)
+	//fmt.Println("Intersects:::",in1.ToLonLat().Lon*180/math.Pi,in1.ToLonLat().Lat*180/math.Pi,"|", in2.ToLonLat().Lon*180/math.Pi, in2.ToLonLat().Lat*180/math.Pi)
 	result := in1
 	if(din2 < din1){
 		//loin = in2.ToLonLat().Lon
 		//lain = in2.ToLonLat().Lat
 		result = in2
 	} //Now we have the nearest intersection point. Finally check if it is in range of POL(point of Line)
-	fmt.Println("Dist: ",result.ToLonLat().Lon*180/math.Pi, result.ToLonLat().Lat*180/math.Pi, ":",din1, din2)
+	//fmt.Println("Dist: ",result.ToLonLat().Lon*180/math.Pi, result.ToLonLat().Lat*180/math.Pi, ":",din1, din2)
 
 
 	/* //THis is not needed as replaced by LOI check
@@ -401,9 +403,9 @@ func Intersection2(nv1a, nv1b, nv2a, nv2b *NVector) (NVector, error) {
 	dab = nv1a.SphericalDistance(nv1b, 1.0)
 	dai = nv1a.SphericalDistance(&result, 1.0)
 	dbi = nv1b.SphericalDistance(&result, 1.0)
-	fmt.Println("T401: ", dab, dai,dbi, (dab-dai-dbi))
+	//fmt.Println("T401: ", dab, dai,dbi, (dab-dai-dbi))
 	if math.Abs(dab-dai-dbi) > 1e-9  && dai*dbi > 0 {
-		fmt.Println("Point Pole Mismatch")
+		//fmt.Println("Point Pole Mismatch")
 		err = NoIntersectionError{}
 	}
 
@@ -411,16 +413,16 @@ func Intersection2(nv1a, nv1b, nv2a, nv2b *NVector) (NVector, error) {
 	dab = nv2a.SphericalDistance2(nv2b, 1.0)
 	dai = nv2a.SphericalDistance2(&result, 1.0)
 	dbi = result.SphericalDistance2(nv2b, 1.0)
-	fmt.Println("T411: ", dab, dai,dbi, (dab-dai-dbi))
+	//fmt.Println("T411: ", dab, dai,dbi, (dab-dai-dbi))
 	if math.Abs(dab-dai-dbi) > 1e-9 && dab > 1e-9  && dai*dbi > 0  { //If distance is zero between LOI points, means whole equator
 		err = NoIntersectionError{}
-		fmt.Println("LOI Mismatch")
+		//fmt.Println("LOI Mismatch")
 
 	}
 
 
 
-	fmt.Println("Int Longitude is,", result.ToLonLat().Lon*180/math.Pi, err)
+	//fmt.Println("Int Longitude is,", result.ToLonLat().Lon*180/math.Pi, err)
 	return result, err
 }
 
@@ -439,7 +441,7 @@ func Extrapolation(nv1a, nv1b, nv2a, nv2b *NVector) (LonLat, error) {
 		_t , _ := NewLonLat((nv2a.ToLonLat().Lon - delta)*180/math.Pi, (nv2a.ToLonLat().Lat)*180/math.Pi)
 		_t1 := _t.ToNVector()
 		nv2a = &_t1
-		
+
 		//fmt.Println("Needs Delta", nv2a)
 		//Since it will happen on equator only(for geoBoss), choose second point as prime meridian on equator(0,0)
 		//nv0ll,_ := NewLonLat(0, 0)
